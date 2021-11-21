@@ -7,3 +7,4 @@ PASSWORD = "IMAPappPassWord"
 SEARCH_EMAIL = "tom@myspace.com"
 DOWNLOAD_FOLDER = "."
 POLLING_INTERVAL = 10000
+DATABASE="/home/user/myfinances.gnucash"
