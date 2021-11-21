@@ -36,7 +36,9 @@ def process_attachments(message):
 def process_unread_messages(mail):
     try:
         # messages = mail.messages(unread=True)  # defaults to inbox
-        messages = mail.messages(date__gt=datetime.date(2021, 11, 1), sent_from='emily@schmitzgraininc.com')
+        messages = mail.messages(
+            date__gt=datetime.date(2021, 11, 1), sent_from="emily@schmitzgraininc.com"
+        )
 
         for (uid, message) in messages:
             print(uid)
@@ -44,12 +46,18 @@ def process_unread_messages(mail):
             subject = message.subject
             print(f"Reading email {subject} from {sent_from}")
             # message_date = timestring.Date(year, month, day, hour, minute, second)(message.date)
-            message_date = message.parsed_date.strftime('%Y-%m-%d')
+            message_date = message.parsed_date.strftime("%Y-%m-%d")
             filename = f"{message_date}-Schmitz_Grain_Bids.html"
-            with open(filename, 'w') as f:
-                f.write(str(message.body["html"]).replace("\\r", " ").replace("\\n", " ").replace("['","").replace("']",""))
+            with open(filename, "w") as f:
+                f.write(
+                    str(message.body["html"])
+                    .replace("\\r", " ")
+                    .replace("\\n", " ")
+                    .replace("['", "")
+                    .replace("']", "")
+                )
             # attachments = process_attachments(message)
-            
+
             # mail.mark_seen(uid)  # mark message as read
         return 0
     except (ConnectionResetError, IMAP4.abort) as e:
@@ -57,6 +65,7 @@ def process_unread_messages(mail):
         print("Connection Reset, waiting for five minutes before retrying...")
         time.sleep(300)  # Wait 5 minutes before trying again
         return -1
+
 
 mail = connect_to_mailbox()
 
