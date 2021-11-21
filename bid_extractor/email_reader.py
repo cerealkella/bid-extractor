@@ -4,7 +4,14 @@ import datetime
 import traceback
 from imbox import Imbox
 from imaplib import IMAP4
-from .local_settings import HOST, USERNAME, PASSWORD, POLLING_INTERVAL, SEARCH_EMAIL
+from .local_settings import (
+    HOST,
+    USERNAME,
+    PASSWORD,
+    POLLING_INTERVAL,
+    SEARCH_EMAIL,
+    DOWNLOAD_FOLDER,
+)
 
 
 def connect_to_mailbox(host=HOST, username=USERNAME, password=PASSWORD):
