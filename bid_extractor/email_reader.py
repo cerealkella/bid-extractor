@@ -76,6 +76,12 @@ while True:
         del mail
         mail = connect_to_mailbox()
     else:
-        time.sleep(POLLING_INTERVAL)
+        # set POLLING_INTERVAL to 0 to run just once
+        if POLLING_INTERVAL == 0:
+            print(f"{current_time} - Done processing!")
+            break
+        else:
+            print(f"{current_time} - Waiting {POLLING_INTERVAL} seconds...")
+            time.sleep(POLLING_INTERVAL)
 
 mail.logout()
