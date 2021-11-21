@@ -29,4 +29,4 @@ print(f"Schmitz Corn Price is {bean_price}")
 url = "file:///home/justin/Desktop/bids/2021-11-19-Elevator_Bids.html"
 bean_price = extract_price(url, "Jan-22")
 value_num = int(float(bean_price) * 100)
-print(f"Schmitz Corn Price is {value_num}")
+print(f"Elevator Corn Price is {value_num}")
