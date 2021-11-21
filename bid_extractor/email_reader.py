@@ -1,4 +1,3 @@
-import os
 import time
 import datetime
 import traceback
@@ -40,21 +39,17 @@ def process_attachments(message):
     return attachments
 
 
-def process_unread_messages(mail):
+def process_messages(mail):
     try:
-        # messages = mail.messages(unread=True)  # defaults to inbox
         messages = mail.messages(
             date__gt=datetime.date(2021, 11, 16), sent_from=SEARCH_EMAIL
         )
-
         for (uid, message) in messages:
-            print(uid)
             sent_from = message.sent_from[0]["name"]
             subject = message.subject
             print(f"Reading email {subject} from {sent_from}")
-            # message_date = timestring.Date(year, month, day, hour, minute, second)(message.date)
             message_date = message.parsed_date.strftime("%Y-%m-%d")
-            filename = f"{DOWNLOAD_FOLDER}/{message_date}-Schmitz_Grain_Bids.html"
+            filename = f"{DOWNLOAD_FOLDER}/{message_date}-Elevator_Bids.html"
             with open(filename, "w") as f:
                 f.write(
                     str(message.body["html"])
@@ -63,12 +58,8 @@ def process_unread_messages(mail):
                     .replace("['", "")
                     .replace("']", "")
                 )
-            # attachments = process_attachments(message)
-
-            # mail.mark_seen(uid)  # mark message as read
         return 0
     except (ConnectionResetError, IMAP4.abort) as e:
-        print(e)
         print("Connection Reset, waiting for five minutes before retrying...")
         time.sleep(300)  # Wait 5 minutes before trying again
         return -1
@@ -79,8 +70,8 @@ mail = connect_to_mailbox()
 while True:
     t = time.localtime()
     current_time = time.strftime("%H:%M:%S", t)
-    print(f"{current_time} - Checking for new messages...")
-    if process_unread_messages(mail) < 0:
+    print(f"{current_time} - Checking for messages...")
+    if process_messages(mail) < 0:
         # Connection Reset, recreate mail object
         del mail
         mail = connect_to_mailbox()
