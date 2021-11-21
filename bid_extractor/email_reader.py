@@ -4,7 +4,7 @@ import datetime
 import traceback
 from imbox import Imbox
 from imaplib import IMAP4
-from .local_settings import HOST, USERNAME, PASSWORD, POLLING_INTERVAL
+from .local_settings import HOST, USERNAME, PASSWORD, POLLING_INTERVAL, SEARCH_EMAIL
 
 
 def connect_to_mailbox(host=HOST, username=USERNAME, password=PASSWORD):
@@ -37,7 +37,7 @@ def process_unread_messages(mail):
     try:
         # messages = mail.messages(unread=True)  # defaults to inbox
         messages = mail.messages(
-            date__gt=datetime.date(2021, 11, 1), sent_from="emily@schmitzgraininc.com"
+            date__gt=datetime.date(2021, 11, 1), sent_from=SEARCH_EMAIL
         )
 
         for (uid, message) in messages:
