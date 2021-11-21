@@ -44,7 +44,7 @@ def process_unread_messages(mail):
     try:
         # messages = mail.messages(unread=True)  # defaults to inbox
         messages = mail.messages(
-            date__gt=datetime.date(2021, 11, 1), sent_from=SEARCH_EMAIL
+            date__gt=datetime.date(2021, 11, 16), sent_from=SEARCH_EMAIL
         )
 
         for (uid, message) in messages:
@@ -54,7 +54,7 @@ def process_unread_messages(mail):
             print(f"Reading email {subject} from {sent_from}")
             # message_date = timestring.Date(year, month, day, hour, minute, second)(message.date)
             message_date = message.parsed_date.strftime("%Y-%m-%d")
-            filename = f"{message_date}-Schmitz_Grain_Bids.html"
+            filename = f"{DOWNLOAD_FOLDER}/{message_date}-Schmitz_Grain_Bids.html"
             with open(filename, "w") as f:
                 f.write(
                     str(message.body["html"])
