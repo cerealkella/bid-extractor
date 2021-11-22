@@ -45,7 +45,8 @@ def process_attachments(message):
 def process_messages(mail, db):
     try:
         messages = mail.messages(
-            date__on=datetime.date(2020, 12, 16),
+            date__gt=datetime.date(2021, 11, 21),   #inclusive
+            # date__lt=datetime.date(2021, 11, 21),  #exclusive
             sent_from=SEARCH_EMAIL,
         )
         for (uid, message) in messages:
@@ -63,12 +64,9 @@ def process_messages(mail, db):
                     .replace("']", "")
                 )
             prices = extract_price(f"file://{filename}", message.parsed_date)
-            print(prices)
             if prices != None:
                 price_date = message.parsed_date.strftime("%Y-%m-%d %H:%M:%S")
                 for key in prices.keys():
-                    print(key)
-                    print(prices[key])
                     insert_idx = enter_grain_bids(db, key, price_date, prices[key])
                     print(f"Row inserted into database at index {insert_idx}")
         return 0
