@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 
 def next_month(date):
     numerical_month = date.strftime("%-m")
-    three_days_more = date + datetime.timedelta(days=+3)
+    three_days_more = date + datetime.timedelta(days=+2)
     if int(numerical_month) != int(three_days_more.strftime("%-m")):
         return three_days_more.strftime("%b").lower()
     else:
@@ -28,7 +28,11 @@ def extract_price(url, bid_date):
         for index, cell in enumerate(row.find_elements(By.TAG_NAME, "td")):
             if (
                 cell.text.lower() == contract_month
+                or cell.text.lower() == f"fh {contract_month}"
                 or cell.text.lower() == contract_month_year
+                or cell.text.lower() == bid_date.strftime('%B').lower()[:4]
+                or cell.text.lower() == f"{bid_date.strftime('%B').lower()[:4]}-{bid_date.strftime('%y')}"
+                or cell.text.lower() == "sept - oct 5"
             ):
                 price_idx = index + 1
             elif next_mon != "xxx":
