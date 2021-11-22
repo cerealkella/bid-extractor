@@ -10,7 +10,10 @@ from .local_settings import (
     POLLING_INTERVAL,
     SEARCH_EMAIL,
     DOWNLOAD_FOLDER,
+    DATABASE,
 )
+from .schmitz import extract_price
+from .database_interface import create_connection, enter_grain_bids
 
 
 def connect_to_mailbox(host=HOST, username=USERNAME, password=PASSWORD):
@@ -39,10 +42,11 @@ def process_attachments(message):
     return attachments
 
 
-def process_messages(mail):
+def process_messages(mail, db):
     try:
         messages = mail.messages(
-            date__gt=datetime.date(2021, 11, 16), sent_from=SEARCH_EMAIL
+            date__on=datetime.date(2020, 12, 16),
+            sent_from=SEARCH_EMAIL,
         )
         for (uid, message) in messages:
             sent_from = message.sent_from[0]["name"]
@@ -58,6 +62,15 @@ def process_messages(mail):
                     .replace("['", "")
                     .replace("']", "")
                 )
+            prices = extract_price(f"file://{filename}", message.parsed_date)
+            print(prices)
+            if prices != None:
+                price_date = message.parsed_date.strftime("%Y-%m-%d %H:%M:%S")
+                for key in prices.keys():
+                    print(key)
+                    print(prices[key])
+                    insert_idx = enter_grain_bids(db, key, price_date, prices[key])
+                    print(f"Row inserted into database at index {insert_idx}")
         return 0
     except (ConnectionResetError, IMAP4.abort) as e:
         print("Connection Reset, waiting for five minutes before retrying...")
@@ -65,13 +78,15 @@ def process_messages(mail):
         return -1
 
 
+# Set up connections
 mail = connect_to_mailbox()
+gnucash = create_connection(DATABASE)
 
 while True:
     t = time.localtime()
     current_time = time.strftime("%H:%M:%S", t)
     print(f"{current_time} - Checking for messages...")
-    if process_messages(mail) < 0:
+    if process_messages(mail, gnucash) < 0:
         # Connection Reset, recreate mail object
         del mail
         mail = connect_to_mailbox()

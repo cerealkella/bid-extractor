@@ -3,9 +3,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from .database_interface import create_connection, enter_grain_bids
-from .local_settings import DATABASE
-
 
 def next_month(date):
     numerical_month = date.strftime("%-m")
@@ -21,7 +18,6 @@ def extract_price(url, bid_date):
     contract_month = bid_date.strftime("%b").lower()
     contract_month_year = f"{contract_month}-{bid_date.strftime('%y')}"
     next_mon = next_month(bid_date)
-    print(f"next_mon = {next_mon}")
     price_idx = -1
     price = 0
     commodity_price = {"corn": 0, "soybeans": 0}
@@ -50,31 +46,15 @@ def extract_price(url, bid_date):
                 counter += 1
                 if counter == 1:
                     print(f"Found Corn Price -> {price}")
-                    commodity_price["corn"] = float(price)
+                    commodity_price["corn"] = int(float(price)*100)
                     # Resetting price index, need to loop through once more
                     price_idx = -1
                 elif counter > 1:
                     print(f"Found Soybean Price -> {price}")
-                    commodity_price["soybeans"] = float(price)
+                    commodity_price["soybeans"] = int(float(price)*100)
                     driver.close()
                     return commodity_price
     driver.close()
     print("---------------------------------------")
     print(f"""Failed to extract prices for {bid_date.strftime("%Y-%m-%d")}""")
     print("---------------------------------------")
-
-
-bid_date = datetime.date(2021, 11, 12)
-url = "file:///home/justin/Desktop/bids/2021-11-12-Elevator_Bids.html"
-# url = "https://www.meadowlandfarmerscoop.com/index.cfm?show=11&mid=3&theLocation=7&layout=1046"
-price = extract_price(url, bid_date)
-print(price)
-# value_num = int(float(corn_price) * 100)
-# print(f"Elevator Corn Price is {value_num}")
-
-
-"""
-conn = create_connection(DATABASE)
-ins = enter_grain_bids(conn, "corn", '2021-11-19 18:00:00', value_num)
-print(ins)
-"""
