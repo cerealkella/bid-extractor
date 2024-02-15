@@ -45,8 +45,8 @@ def process_attachments(message):
 def process_messages(mail, db):
     try:
         messages = mail.messages(
-            date__gt=datetime.date(2023, 12, 1),  # inclusive
-            date__lt=datetime.date(2023, 12, 13),  # exclusive
+            date__gt=datetime.date(2024, 2, 1),  # inclusive
+            date__lt=datetime.date(2024, 2, 15),  # exclusive
             sent_from=SEARCH_EMAIL,
         )
         for (uid, message) in messages:
