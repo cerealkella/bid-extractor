@@ -1,7 +1,7 @@
 import time
 import datetime
 import traceback
-from imbox import Imbox
+import imbox
 from imaplib import IMAP4
 from .local_settings import (
     HOST,
@@ -17,7 +17,7 @@ from .database_interface import create_connection, enter_grain_bids
 
 
 def connect_to_mailbox(host=HOST, username=USERNAME, password=PASSWORD):
-    mail = Imbox(
+    mail = imbox.Imbox(
         HOST,
         username=USERNAME,
         password=PASSWORD,
@@ -45,8 +45,8 @@ def process_attachments(message):
 def process_messages(mail, db):
     try:
         messages = mail.messages(
-            date__gt=datetime.date(2024, 2, 1),  # inclusive
-            date__lt=datetime.date(2024, 2, 15),  # exclusive
+            date__gt=datetime.date(2024, 4, 1),  # inclusive
+            date__lt=datetime.date(2024, 4, 5),  # exclusive
             sent_from=SEARCH_EMAIL,
         )
         for (uid, message) in messages:
@@ -69,6 +69,7 @@ def process_messages(mail, db):
                 for key in prices.keys():
                     insert_idx = enter_grain_bids(db, key, price_date, prices[key])
                     print(f"Row inserted into database at index {insert_idx}")
+            mail.delete(uid)
         return 0
     except (ConnectionResetError, IMAP4.abort) as e:
         print("Connection Reset, waiting for five minutes before retrying...")
