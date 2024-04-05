@@ -45,8 +45,8 @@ def process_attachments(message):
 def process_messages(mail, db):
     try:
         messages = mail.messages(
-            date__gt=datetime.date(2024, 4, 1),  # inclusive
-            date__lt=datetime.date(2024, 4, 5),  # exclusive
+            date__gt=datetime.date(2024, 4, 5),  # inclusive
+            date__lt=datetime.date(2024, 4, 6),  # exclusive
             sent_from=SEARCH_EMAIL,
         )
         for (uid, message) in messages:
@@ -69,6 +69,7 @@ def process_messages(mail, db):
                 for key in prices.keys():
                     insert_idx = enter_grain_bids(db, key, price_date, prices[key])
                     print(f"Row inserted into database at index {insert_idx}")
+            mail.mark_seen(uid)
             mail.delete(uid)
         return 0
     except (ConnectionResetError, IMAP4.abort) as e:
