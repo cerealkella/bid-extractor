@@ -11,7 +11,7 @@ TODAY = NOW.strftime("%Y-%m-%d")
 
 def get_cashbid_csv():
     print(f"{NOW} - Saving Meadowland Cash Bids CSV file...")
-    url = "https://www.meadowlandfarmerscoop.com/markets/cashbid-download.php"
+    url = "https://meadsprout2.agricharts.com/markets/cashbid-download.php"
     wget.download(url, out=os.path.join(DOWNLOAD_FOLDER,f"{TODAY}-Meadowland.csv"), bar=None)
 
 
@@ -19,7 +19,7 @@ def get_cashbid_html():
     driver = webdriver.Firefox()
     driver.implicitly_wait(0.5)
     #launch URL
-    url = "https://www.meadowlandfarmerscoop.com/markets/cash.php"
+    url = "https://meadowlandfarmerscoop.com/#cash-bids"
     driver.get(url)
     #get file path to save page
     n=os.path.join(DOWNLOAD_FOLDER,f"{TODAY}-Meadowland.html")
